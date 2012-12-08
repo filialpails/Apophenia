@@ -1,17 +1,15 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Apophenia.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Deck.cs">
     <Files>
-      <File FileName="Apophenia.cs" Line="11" Column="3" />
+      <File FileName="Apophenia.cs" Line="25" Column="67" />
+      <File FileName="Deck.cs" Line="18" Column="51" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Apophenia" expanded="True">
-            <Node name="Properties" expanded="True">
-              <Node name="Resources.resx" expanded="True" />
-            </Node>
-            <Node name="Apophenia.cs" expanded="True" selected="True" />
+            <Node name="Deck.cs" selected="True" />
           </Node>
         </State>
       </Pad>

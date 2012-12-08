@@ -41,6 +41,7 @@
 			this.button1 = new System.Windows.Forms.Button();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.label2 = new System.Windows.Forms.Label();
+			this.cmbDeckSelect = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -57,7 +58,7 @@
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(149, 13);
 			this.label1.TabIndex = 0;
-			this.label1.Text = "Aprophenia: the perception of or belief in connectedness among unrelated phenomena.";
+			this.label1.Text = "Aprophenia: the perception of or\nbelief in connectedness among\nunrelated phenomena.";
 			// 
 			// pictureBox1
 			// 
@@ -189,6 +190,14 @@
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(0, 13);
 			this.label2.TabIndex = 0;
+			//
+			// cmbDeckSelect
+			//
+			this.cmbDeckSelect.AutoSize = true;
+			this.cmbDeckSelect.Location = new System.Drawing.Point(20, 50);
+			this.cmbDeckSelect.Name = "cmbDeckSelect";
+			this.cmbDeckSelect.Size = new System.Drawing.Size(160, 50);
+			this.cmbDeckSelect.SelectedIndexChanged += this.cmbDeckSelect_SelectedIndexChanged;
 			// 
 			// Apophenia
 			// 
@@ -204,6 +213,7 @@
 			this.Controls.Add(this.pictureBox3);
 			this.Controls.Add(this.pictureBox1);
 			this.Controls.Add(this.label1);
+			this.Controls.Add(this.cmbDeckSelect);
 			this.MaximizeBox = false;
 			this.Name = "Apophenia";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -237,5 +247,6 @@
 		private System.Windows.Forms.Button button1;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.ComboBox cmbDeckSelect;
 	}
 }

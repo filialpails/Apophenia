@@ -1,33 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Apophenia.Properties;
 
 namespace Apophenia
 {
 	public partial class Apophenia : Form
 	{
-		private Random rnd = new Random();
-		private Bitmap[] cards = new[] { Resources._00Fool, Resources._01Magician, Resources._02Priestess, Resources._03Empress, Resources._04Emperor, Resources._05Hierophant, Resources._06Lovers, Resources._07Chariot, Resources._08Justice, Resources._09Hermit, Resources._10Fotune, Resources._11Strength, Resources._12Hangedman, Resources._13Death, Resources._14Tenperance, Resources._15Devil, Resources._16Tower, Resources._17Star, Resources._18Moon, Resources._19Sun, Resources._20Judgement, Resources._21World };
-		private Queue<int> drawnCards = null;
+		private static readonly Random rnd = new Random();
+		private readonly List<Deck> decks = new List<Deck>();
+		private Deck selectedDeck;
+		private Queue<int> drawnCards = new Queue<int>();
 
 		public Apophenia()
 		{
 			InitializeComponent();
+			Directory.SetCurrentDirectory("../..");
+			string[] dirs = Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "decks");
+			foreach (var dir in dirs)
+			{
+				decks.Add(new Deck(dir));
+				cmbDeckSelect.Items.Add(dir.Substring(dir.LastIndexOf('/') + 1));
+			}
+			selectedDeck = decks.First();
 		}
 		
 		private void button1_Click(object sender, EventArgs e)
 		{
-			pictureBox1.Image = Resources._00CardBack;
-			pictureBox2.Image = Resources._00CardBack;
-			pictureBox3.Image = Resources._00CardBack;
-			pictureBox4.Image = Resources._00CardBack;
-			pictureBox5.Image = Resources._00CardBack;
+			pictureBox1.Image = selectedDeck.CardBack;
+			pictureBox2.Image = selectedDeck.CardBack;
+			pictureBox3.Image = selectedDeck.CardBack;
+			pictureBox4.Image = selectedDeck.CardBack;
+			pictureBox5.Image = selectedDeck.CardBack;
+			int size = selectedDeck.Cards.Count;
 			if (radioButton1.Checked)
 			{
-				drawnCards = new Queue<int>(Enumerable.Range(0, 22).OrderBy(x => rnd.Next(0, 22)).Take(2));
+				drawnCards = new Queue<int>(Enumerable.Range(0, size).OrderBy(x => rnd.Next(0, size)).Take(2));
 				pictureBox1.Visible = true;
 				pictureBox2.Visible = false;
 				pictureBox3.Visible = true;
@@ -36,7 +46,7 @@ namespace Apophenia
 			}
 			else if (radioButton2.Checked)
 			{
-				drawnCards = new Queue<int>(Enumerable.Range(0, 22).OrderBy(x => rnd.Next(0, 22)).Take(3));
+				drawnCards = new Queue<int>(Enumerable.Range(0, size).OrderBy(x => rnd.Next(0, size)).Take(3));
 				pictureBox1.Visible = true;
 				pictureBox2.Visible = true;
 				pictureBox3.Visible = true;
@@ -45,7 +55,7 @@ namespace Apophenia
 			}
 			else if (radioButton3.Checked)
 			{
-				drawnCards = new Queue<int>(Enumerable.Range(0, 22).OrderBy(x => rnd.Next(0, 22)).Take(4));
+				drawnCards = new Queue<int>(Enumerable.Range(0, size).OrderBy(x => rnd.Next(0, size)).Take(4));
 				pictureBox1.Visible = true;
 				pictureBox2.Visible = false;
 				pictureBox3.Visible = true;
@@ -58,7 +68,7 @@ namespace Apophenia
 		private void pictureBox_Click(object sender, EventArgs e)
 		{
 			PictureBox pb = (PictureBox)sender;
-			pb.Image = cards[drawnCards.Dequeue()];
+			pb.Image = selectedDeck.Cards[drawnCards.Dequeue()];
 		}
 
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -68,6 +78,12 @@ namespace Apophenia
 			pictureBox3.Image = null;
 			pictureBox4.Image = null;
 			pictureBox5.Image = null;
+		}
+
+		private void cmbDeckSelect_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			selectedDeck = decks.Where(d => d.Name == ((ComboBox)sender).SelectedText).Single();
+			button1_Click(null, EventArgs.Empty);
 		}
 	}
 }

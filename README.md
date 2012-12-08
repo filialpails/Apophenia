@@ -1,3 +1,5 @@
 Apophenia
 =========
-The perception of or belief in connectedness among unrelated phenomena.
+
+Draws random tarot cards from user-defined decks.
+
