@@ -20,13 +20,14 @@ namespace Apophenia
 			Cards = new List<Bitmap>(files.Length);
 			foreach (var file in files)
 			{
+				var b = new Bitmap(file);
 				if (Regex.IsMatch(file, @"back\.(?:(?:jp(?:e)?g)|(?:gif)|(?:png))$", RegexOptions.IgnoreCase))
 				{
-					CardBack = new Bitmap(file);
+					CardBack = b;
 				}
 				else
 				{
-					Cards.Add(new Bitmap(file));
+					Cards.Add(b);
 				}
 			}
 		}

@@ -31,6 +31,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <CodePage>65001</CodePage>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -63,9 +64,14 @@
   <ItemGroup>
     <Compile Include="Apophenia.Designer.cs">
       <DependentUpon>Apophenia.cs</DependentUpon>
+      <Gettext-ScanForTranslations>false</Gettext-ScanForTranslations>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Program.cs">
+      <Gettext-ScanForTranslations>false</Gettext-ScanForTranslations>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <Gettext-ScanForTranslations>false</Gettext-ScanForTranslations>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -92,8 +98,11 @@
     </Compile>
     <Compile Include="Apophenia.cs">
       <SubType>Form</SubType>
+      <Gettext-ScanForTranslations>false</Gettext-ScanForTranslations>
     </Compile>
-    <Compile Include="Deck.cs" />
+    <Compile Include="Deck.cs">
+      <Gettext-ScanForTranslations>false</Gettext-ScanForTranslations>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
