@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Apophenia")]
-[assembly: AssemblyCopyright("Copyright © Rob Steward 2012")]
+[assembly: AssemblyCopyright("Copyright © Rob Steward 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

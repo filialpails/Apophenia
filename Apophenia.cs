@@ -7,139 +7,137 @@ using System.Windows.Forms;
 
 namespace Apophenia
 {
-	public partial class Apophenia : Form, IMessageFilter
+	public partial class Apophenia : Form
 	{
-		private IntPtr WindowFromPoint(Point pt)
-		{
-			var c = GetChildAtPoint(PointToClient(pt));
-			if (c == null) return IntPtr.Zero;
-			while (c.HasChildren)
-			{
-				var c2 = c.GetChildAtPoint(c.PointToClient(pt));
-				if (c2 == null) break;
-				c = c2;
-			}
-			return c.Handle;
-		}
-		public bool PreFilterMessage(ref Message m)
-		{
-			if (m.Msg == 0x020a)
-			{
-				IntPtr hWnd = WindowFromPoint(Cursor.Position);
-				if (hWnd != IntPtr.Zero && hWnd != m.HWnd && Control.FromHandle(hWnd) != null && Control.FromHandle(hWnd).Name.StartsWith("pbxNewCard"))
-				{
-					var pos = new Point(m.LParam.ToInt32() & 0xffff, m.LParam.ToInt32() >> 16);
-					pbxNewCard_MouseWheel(Control.FromHandle(hWnd), new MouseEventArgs(MouseButtons.None, 0, pos.X, pos.Y, m.WParam.ToInt32() >> 16));
-					return true;
-				}
-			}
-			return false;
-		}
-
-		private static readonly Random rnd = new Random();
-		private readonly List<Deck> decks = new List<Deck>();
 		private Deck selectedDeck;
-		private Queue<int> drawnCards;
 		private Point lastClick;
-		private int cardNum = 0;
+		private int cardNum;
+		private static readonly string[] interps = new[]
+		{
+			"This card means your spirituality is outweighed only by your gullibility.",
+			"This card means you must free your mind from its preoccupation with the relative arrangement of small, colourful rectangles.",
+			"The spirits you are trying to contact could not be reached. Please hang up and try again.",
+			"Trust me, you'd rather not know what this one means.",
+			"The Old Ones have noticed you. Burn the cards immediately.",
+			"Your INT attribute is not high enough to read this card.",
+			"Your WIS attribute is not high enough to read this card.",
+			"This card means you see meaningful patterns or connections in random or meaningless data.",
+			"This card represents itself.",
+			"It's just as you've always suspected: quantum physics, therefore magic.",
+			"Consult your pineal gland.",
+			"fnord",
+			"This card isn't saying it was aliens... but it was aliens.",
+			"Light rain\n23°C\nPrecipitation: 80%\nHumidity: 95%\nWind 2 km/h",
+			"This card says that if you open your mind too much your brain will fall out.",
+			"This card represents nothingness. So do all the rest of them.",
+			"It is too hot to perform a cold reading. Please lower the ambient temperature and try again.",
+			"Woolworths stores are sites of great mystical power.",
+			"ᛞᛁᚳ ᛒᚢᛏ",
+			"ᛈᛁᚾᛏᛖᛚ ᚫᚱᛋ",
+			"ᚇᚔᚉ ᚁᚒᚈ",
+			"ᚈᚖᚅ ᚁᚑᚈ",
+			"It's a get out of jail free card.",
+			"You marked this card, you cheater.",
+			"Woo!",
+			"Blackjack!",
+			"Negative energy is preventing a clear reading. Run a magnet over your computer to adjust for it.",
+			"tw: tentacles",
+			"Your crystals are not compatible with this software. Please use dilithium crystals instead."
+		}.Union(Enumerable.Range('A', 26).Select(c => "Does a name that starts with " + (char)c + " have any kind of meaning to you? Yes? Magic.")).ToArray();
 
 		public Apophenia()
 		{
 			InitializeComponent();
-			Application.AddMessageFilter(this);
-			this.DoubleBuffered = true;
-			Directory.SetCurrentDirectory("../..");
-			string[] dirs = Directory.GetDirectories(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "decks");
-			foreach (var dir in dirs)
+			cmbDeckSelect.DataSource = Directory.EnumerateDirectories(Path.Combine("..", "..", "decks")).Select(dir => new Deck(dir)).ToList();
+			if (cmbDeckSelect.Items.Count == 0)
 			{
-				decks.Add(new Deck(dir));
-				cmbDeckSelect.Items.Add(dir.Substring(dir.LastIndexOf('/') + 1));
+				MessageBox.Show("You have no decks installed.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Close();
 			}
 			cmbDeckSelect.SelectedIndex = 0;
 		}
 		
-		private void btnDeal_Click(object sender, EventArgs e)
+		private void btnClear_Click(object sender, EventArgs e)
 		{
-			for (int i = 0; i < cardNum; ++i)
+			for (var i = 0; i < cardNum; ++i)
 			{
-				this.Controls.RemoveByKey("pbxNewCard" + i);
+				Controls.RemoveByKey("pbxNewCard" + i);
 			}
 			cardNum = 0;
-			var count = selectedDeck.Cards.Count;
-			drawnCards = new Queue<int>(Enumerable.Range(0, count).OrderBy(x => rnd.Next(0, count)));
+			selectedDeck.reset();
+			pbxZoom.Image = null;
 		}
+
 		private void pbxDeck_MouseDown(object sender, MouseEventArgs e)
 		{
-			if (e.Button != System.Windows.Forms.MouseButtons.Left) return;
-			var pbxNewCard = new PictureBox();
-			pbxNewCard.Name = "pbxNewCard" + cardNum++;
+			if (e.Button != MouseButtons.Left) return;
+			var pbxNewCard = new PictureBox
+			{
+				Name = "pbxNewCard" + cardNum++,
+				SizeMode = PictureBoxSizeMode.Zoom,
+				Image = pbxDeck.Image,
+				Size = pbxDeck.Size,
+				Location = grpDeck.Location + new Size(pbxDeck.Location) + new Size(e.Location)
+			};
 			pbxNewCard.MouseDown += pbxNewCard_MouseDown;
 			pbxNewCard.MouseMove += pbxNewCard_MouseMove;
 			pbxNewCard.MouseDoubleClick += pbxNewCard_MouseDoubleClick;
-			pbxNewCard.MouseWheel += pbxNewCard_MouseWheel;
-			pbxNewCard.Location = grpBox.Location + new Size(pbxDeck.Location) + new Size(e.Location) - new Size(100, 150);
-			pbxNewCard.Size = new Size(200, 300);
-			pbxNewCard.SizeMode = PictureBoxSizeMode.Zoom;
-			pbxNewCard.Image = pbxDeck.Image;
-			this.Controls.Add(pbxNewCard);
+			Controls.Add(pbxNewCard);
 			pbxNewCard.BringToFront();
-			lastClick = new Point(100, 150);
+			lastClick = new Point(pbxNewCard.Width / 2, pbxNewCard.Height / 2);
 			pbxDeck.Capture = false;
 		}
+
 		private void pbxNewCard_MouseDown(object sender, MouseEventArgs e)
 		{
 			var pb = (PictureBox)sender;
-			switch (e.Button) {
+			switch (e.Button)
+			{
 			case MouseButtons.Left:
 				lastClick = e.Location;
+				pbxZoom.Image = pb.Image;
 				break;
 			case MouseButtons.Right:
-				pb.Size = new Size(pb.Height, pb.Width);
 				pb.Image = (Bitmap)pb.Image.Clone();
 				pb.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+				pb.Size = new Size(pb.Height, pb.Width);
 				break;
 			}
 		}
+		
 		private void pbxNewCard_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left) return;
 			var card = (PictureBox)sender;
 			card.Location += new Size(e.Location - new Size(lastClick));
 		}
+		
 		private void pbxNewCard_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
 			var pb = (PictureBox)sender;
 			if (e.Button != MouseButtons.Left || (string)pb.Tag == "flipped") return;
 			pb.Tag = "flipped";
-			Bitmap b = selectedDeck.Cards[drawnCards.Dequeue()];
+			var b = selectedDeck.draw();
 			if (pb.Width > pb.Height)
 			{
 				b = (Bitmap)b.Clone();
 				b.RotateFlip(RotateFlipType.Rotate90FlipNone);
 			}
-			if (rnd.Next(2) % 2 == 0)
+			if (Rand.Next(2) % 2 == 0)
 			{
 				b = (Bitmap)b.Clone();
 				b.RotateFlip(RotateFlipType.Rotate180FlipNone);
 			}
 			pb.Image = b;
+			lblInterpretation.Text = interps.Shuffle().First();
+			pbxZoom.Image = pb.Image;
 		}
-		private void pbxNewCard_MouseWheel(object sender, MouseEventArgs e)
-		{
-			if (Math.Abs(e.Delta) < 120) return;
-			var pb = (PictureBox)sender;
-			double scale = e.Delta * 0.01;
-			if (e.Delta < 0) scale = 1/-scale;
-			var oldSize = pb.Size;
-			pb.Height = (int)(pb.Height * scale);
-			pb.Width = (int)(pb.Height * scale);
-			pb.Location += new Size((int)((oldSize.Width - pb.Width) / 2), (int)((oldSize.Height - pb.Height) / 2));
-		}
+		
 		private void cmbDeckSelect_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			selectedDeck = decks.Single(d => d.Name == ((ComboBox)sender).SelectedText);
+			selectedDeck = (Deck)((ComboBox)sender).SelectedItem;
 			pbxDeck.Image = selectedDeck.CardBack;
-			btnDeal_Click(btnDeal, EventArgs.Empty);
+			btnClear_Click(btnDeal, EventArgs.Empty);
 		}
 	}
 }

@@ -1,6 +1,4 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Apophenia.cs">
     <Files>
       <File FileName="Apophenia.cs" Line="39" Column="38" />
       <File FileName="Deck.cs" Line="21" Column="31" />
@@ -20,15 +18,5 @@
           <Node name="Apophenia" expanded="True" />
         </State>
       </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>drawnCards</Value>
-        </State>
-      </Pad>
     </Pads>
-  </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
