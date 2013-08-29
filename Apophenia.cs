@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -66,6 +65,7 @@ namespace Apophenia
 			cardNum = 0;
 			selectedDeck.reset();
 			pbxZoom.Image = null;
+			lblInterpretation.Text = "";
 		}
 
 		private void pbxDeck_MouseDown(object sender, MouseEventArgs e)
@@ -108,8 +108,7 @@ namespace Apophenia
 		private void pbxNewCard_MouseMove(object sender, MouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left) return;
-			var card = (PictureBox)sender;
-			card.Location += new Size(e.Location - new Size(lastClick));
+			((PictureBox)sender).Location += new Size(e.Location - new Size(lastClick));
 		}
 		
 		private void pbxNewCard_MouseDoubleClick(object sender, MouseEventArgs e)
