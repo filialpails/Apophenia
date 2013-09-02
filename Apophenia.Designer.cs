@@ -67,7 +67,7 @@
 			this.grpDeck.Location = new System.Drawing.Point(12, 350);
 			this.grpDeck.Name = "grpDeck";
 			this.grpDeck.Size = new System.Drawing.Size(106, 200);
-			this.grpDeck.TabIndex = 0;
+			this.grpDeck.TabIndex = 3;
 			this.grpDeck.TabStop = false;
 			this.grpDeck.Text = "Deck";
 			// 
@@ -78,7 +78,7 @@
 			this.pbxDeck.Name = "pbxDeck";
 			this.pbxDeck.Size = new System.Drawing.Size(100, 137);
 			this.pbxDeck.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pbxDeck.TabIndex = 1;
+			this.pbxDeck.TabIndex = 0;
 			this.pbxDeck.TabStop = false;
 			this.pbxDeck.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbxDeck_MouseDown);
 			// 
@@ -90,7 +90,7 @@
 			this.cmbDeckSelect.Location = new System.Drawing.Point(3, 153);
 			this.cmbDeckSelect.Name = "cmbDeckSelect";
 			this.cmbDeckSelect.Size = new System.Drawing.Size(100, 21);
-			this.cmbDeckSelect.TabIndex = 2;
+			this.cmbDeckSelect.TabIndex = 0;
 			this.cmbDeckSelect.ValueMember = "Name";
 			this.cmbDeckSelect.SelectedIndexChanged += new System.EventHandler(this.cmbDeckSelect_SelectedIndexChanged);
 			// 
@@ -101,7 +101,7 @@
 			this.btnDeal.Location = new System.Drawing.Point(3, 174);
 			this.btnDeal.Name = "btnDeal";
 			this.btnDeal.Size = new System.Drawing.Size(100, 23);
-			this.btnDeal.TabIndex = 3;
+			this.btnDeal.TabIndex = 1;
 			this.btnDeal.Text = "Clear Cards";
 			this.btnDeal.UseVisualStyleBackColor = true;
 			this.btnDeal.Click += new System.EventHandler(this.btnClear_Click);
@@ -115,7 +115,7 @@
 			this.grpInstructions.Location = new System.Drawing.Point(124, 462);
 			this.grpInstructions.Name = "grpInstructions";
 			this.grpInstructions.Size = new System.Drawing.Size(427, 88);
-			this.grpInstructions.TabIndex = 3;
+			this.grpInstructions.TabIndex = 2;
 			this.grpInstructions.TabStop = false;
 			this.grpInstructions.Text = "Instructions";
 			// 
@@ -128,7 +128,7 @@
 			this.grpInterpretation.Location = new System.Drawing.Point(124, 350);
 			this.grpInterpretation.Name = "grpInterpretation";
 			this.grpInterpretation.Size = new System.Drawing.Size(427, 106);
-			this.grpInterpretation.TabIndex = 4;
+			this.grpInterpretation.TabIndex = 1;
 			this.grpInterpretation.TabStop = false;
 			this.grpInterpretation.Text = "Interpretation";
 			// 
@@ -147,7 +147,7 @@
 			this.pbxZoom.Name = "pbxZoom";
 			this.pbxZoom.Size = new System.Drawing.Size(209, 308);
 			this.pbxZoom.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-			this.pbxZoom.TabIndex = 5;
+			this.pbxZoom.TabIndex = 0;
 			this.pbxZoom.TabStop = false;
 			// 
 			// grpZoom
@@ -158,7 +158,7 @@
 			this.grpZoom.Location = new System.Drawing.Point(557, 223);
 			this.grpZoom.Name = "grpZoom";
 			this.grpZoom.Size = new System.Drawing.Size(215, 327);
-			this.grpZoom.TabIndex = 6;
+			this.grpZoom.TabIndex = 0;
 			this.grpZoom.TabStop = false;
 			this.grpZoom.Text = "Zoom";
 			// 

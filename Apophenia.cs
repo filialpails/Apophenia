@@ -11,7 +11,7 @@ namespace Apophenia
 		private Deck selectedDeck;
 		private Point lastClick;
 		private int cardNum;
-		private static readonly string[] interps = new[]
+		private static readonly string[] interps =
 		{
 			"This card means your spirituality is outweighed only by your gullibility.",
 			"This card means you must free your mind from its preoccupation with the relative arrangement of small, colourful rectangles.",
@@ -42,12 +42,12 @@ namespace Apophenia
 			"Negative energy is preventing a clear reading. Run a magnet over your computer to adjust for it.",
 			"tw: tentacles",
 			"Your crystals are not compatible with this software. Please use dilithium crystals instead."
-		}.Union(Enumerable.Range('A', 26).Select(c => "Does a name that starts with " + (char)c + " have any kind of meaning to you? Yes? Magic.")).ToArray();
+		};
 
 		public Apophenia()
 		{
 			InitializeComponent();
-			cmbDeckSelect.DataSource = Directory.EnumerateDirectories(Path.Combine("..", "..", "decks")).Select(dir => new Deck(dir)).ToList();
+			cmbDeckSelect.DataSource = Directory.EnumerateDirectories("decks").Select(dir => new Deck(dir)).ToList();
 			if (cmbDeckSelect.Items.Count == 0)
 			{
 				MessageBox.Show("You have no decks installed.", Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -56,50 +56,70 @@ namespace Apophenia
 			cmbDeckSelect.SelectedIndex = 0;
 		}
 		
-		private void btnClear_Click(object sender, EventArgs e)
+		private void clear()
 		{
 			for (var i = 0; i < cardNum; ++i)
 			{
-				Controls.RemoveByKey("pbxNewCard" + i);
+				string key = "pbxNewCard" + i;
+				Controls[key].Dispose();
+				Controls.RemoveByKey(key);
 			}
 			cardNum = 0;
-			selectedDeck.reset();
+			selectedDeck.Reset();
 			pbxZoom.Image = null;
 			lblInterpretation.Text = "";
 		}
 
-		private void pbxDeck_MouseDown(object sender, MouseEventArgs e)
+		private void btnClear_Click(object sender, EventArgs e)
 		{
-			if (e.Button != MouseButtons.Left) return;
+			clear();
+		}
+
+		private PictureBox newCard(Point location)
+		{
+			var card = selectedDeck.Draw();
 			var pbxNewCard = new PictureBox
 			{
 				Name = "pbxNewCard" + cardNum++,
 				SizeMode = PictureBoxSizeMode.Zoom,
-				Image = pbxDeck.Image,
+				Image = card.Back,
 				Size = pbxDeck.Size,
-				Location = grpDeck.Location + new Size(pbxDeck.Location) + new Size(e.Location)
+				Location = grpDeck.Location + new Size(pbxDeck.Location) + new Size(location),
+				Tag = card
 			};
 			pbxNewCard.MouseDown += pbxNewCard_MouseDown;
 			pbxNewCard.MouseMove += pbxNewCard_MouseMove;
 			pbxNewCard.MouseDoubleClick += pbxNewCard_MouseDoubleClick;
+			return pbxNewCard;
+		}
+
+		private void pbxDeck_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button != MouseButtons.Left || cardNum >= selectedDeck.Count) return;
+			var pbxNewCard = newCard(e.Location);
 			Controls.Add(pbxNewCard);
 			pbxNewCard.BringToFront();
 			lastClick = new Point(pbxNewCard.Width / 2, pbxNewCard.Height / 2);
 			pbxDeck.Capture = false;
 		}
 
+		private void setZoomImage(Card card)
+		{
+			pbxZoom.Image = card.Flipped ? card.FrontOriginal : card.BackOriginal;
+		}
+
 		private void pbxNewCard_MouseDown(object sender, MouseEventArgs e)
 		{
 			var pb = (PictureBox)sender;
+			var card = (Card)pb.Tag;
 			switch (e.Button)
 			{
 			case MouseButtons.Left:
 				lastClick = e.Location;
-				pbxZoom.Image = pb.Image;
+				setZoomImage(card);
 				break;
 			case MouseButtons.Right:
-				pb.Image = (Bitmap)pb.Image.Clone();
-				pb.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+				card.RotateRight();
 				pb.Size = new Size(pb.Height, pb.Width);
 				break;
 			}
@@ -114,29 +134,19 @@ namespace Apophenia
 		private void pbxNewCard_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
 			var pb = (PictureBox)sender;
-			if (e.Button != MouseButtons.Left || (string)pb.Tag == "flipped") return;
-			pb.Tag = "flipped";
-			var b = selectedDeck.draw();
-			if (pb.Width > pb.Height)
-			{
-				b = (Bitmap)b.Clone();
-				b.RotateFlip(RotateFlipType.Rotate90FlipNone);
-			}
-			if (Rand.Next(2) % 2 == 0)
-			{
-				b = (Bitmap)b.Clone();
-				b.RotateFlip(RotateFlipType.Rotate180FlipNone);
-			}
-			pb.Image = b;
+			var card = (Card)pb.Tag;
+			if (e.Button != MouseButtons.Left || card.Flipped) return;
+			card.Flipped = true;
+			pb.Image = card.Front;
 			lblInterpretation.Text = interps.Shuffle().First();
-			pbxZoom.Image = pb.Image;
+			setZoomImage(card);
 		}
 		
 		private void cmbDeckSelect_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			selectedDeck = (Deck)((ComboBox)sender).SelectedItem;
 			pbxDeck.Image = selectedDeck.CardBack;
-			btnClear_Click(btnDeal, EventArgs.Empty);
+			clear();
 		}
 	}
 }
